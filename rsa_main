@@ -1,0 +1,191 @@
+package com.company;
+
+import java.math.BigInteger;
+import java.util.Random;
+import java.io.File;  // Import the File class
+import java.io.FileWriter;   // Import the FileWriter class
+import java.io.IOException;  // Import the IOException class to handle errors
+
+public class Main {
+    public static String private_key_file = "sk.txt";
+    public static String public_key_file = "pk.txt";
+
+
+    public static void main(String[] args) {
+        boolean eIsCorrect = false;
+        BigInteger e_big = null;
+
+        // 1. create RSA-Key-pair
+        Random rnd = new Random();
+
+        int BIT_LENGTH = 2048;
+
+        // Generate random primes p,q
+        BigInteger p = BigInteger.probablePrime(BIT_LENGTH / 2, rnd);
+        BigInteger q = BigInteger.probablePrime(BIT_LENGTH / 2, rnd);
+
+        // calculate n & phi(n)
+        BigInteger n = p.multiply(q); // p*q
+        BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));  //phi(n)
+
+        while(!eIsCorrect) {
+             e_big = new BigInteger(BIT_LENGTH, rnd);
+            //erweiterter euklidischer algorithmus
+            int a = 567;
+            int b = 321;
+            boolean isOne = euclidean(e_big,phi);
+            if (isOne == true){
+                eIsCorrect = true;
+                System.out.println(isOne);
+            }
+        }
+
+      
+        System.out.println("neues e: " + e_big.toString());
+
+
+        // calculate d
+
+
+
+
+
+
+//-------------------------------------------------------------------------------
+        //create private and public key files
+        try {
+            File file_sk = new File(private_key_file); //private-key
+            File file_pk = new File(public_key_file); //public-key
+
+
+            // create private-key file
+            if (file_sk.createNewFile()) {
+                System.out.println("File created: " + file_sk.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+
+            // create public-key file
+            if (file_pk.createNewFile()) {
+                System.out.println("File created: " + file_pk.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+
+        } catch (IOException e) {
+            System.out.println("the file could not be created.");
+            e.printStackTrace();
+        }
+
+        // write the keys of private_key_file
+        try {
+            FileWriter skWrite = new FileWriter(private_key_file);
+            skWrite.write("private Keys: (n,d)");
+            skWrite.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("the file:  " + private_key_file + " failed to be writeable.");
+            e.printStackTrace();
+        }
+
+        // write the keys of public_key_file
+        try {
+            FileWriter pkWrite = new FileWriter(public_key_file);
+            pkWrite.write("public Keys: (n,e)");
+            pkWrite.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("the file:  " + public_key_file + " failed to be writeable.");
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+//------------------------------------------------------------------------------------------
+
+        // 2. read text.txt in a string, encrypt(verschlüsseln) this string
+        // 3. decrypt the chiffre.txt with privat-key, write decrypted-text in text-d.txt
+
+    }
+
+    static boolean euclidean(BigInteger a, BigInteger b) {
+        BigInteger a_old = a;
+        BigInteger b_old = b;
+        boolean firstRow = true;
+        boolean isOne = false;
+        boolean bIsZero = false;
+        //BigInteger x0 = 0, x1 = 0, y0 = 0, y1 = 0, q = 0, r = 0;
+        BigInteger x0 = BigInteger.ZERO;
+        BigInteger y0 = BigInteger.ZERO;
+        BigInteger x1 = BigInteger.ZERO;
+        BigInteger y1 = BigInteger.ZERO;
+        BigInteger q = BigInteger.ZERO;
+        BigInteger r = BigInteger.ZERO;
+
+        BigInteger x0_old, y0_old, x1_old, y1_old;
+
+
+        int lessThan = a.compareTo(b);
+        if(lessThan == -1){
+            System.out.println("a is smaller than b!");
+        }else{
+
+            // un
+            while(bIsZero == false) {
+
+
+
+                if (firstRow == true) {
+                    x0 = BigInteger.ONE;
+                    y0 = BigInteger.ZERO;
+                    x1 = BigInteger.ZERO;
+                    y1 = BigInteger.ONE;
+                    q = a.divide(b);
+                    r = a.mod(b);
+                    firstRow = false;
+
+                    //System.out.println(a +" "+ b +" "+ x0 +" "+ y0 +" "+ x1 +" "+ y1 +" "+ q +" "+ r);
+
+
+                } else {
+                    x0_old = x0;
+                    y0_old = y0;
+                    x1_old = x1;
+                    y1_old = y1;
+                    a = b;
+                    b = r;
+                    x0 = x1;
+                    y0 = y1;
+
+                    if (b.equals(BigInteger.ZERO)){
+                        bIsZero = true;
+
+                        if(x0.multiply(a_old).add(y0.multiply(b_old)).equals(1)){
+                            isOne = true;
+                        }
+                    }else{
+                    x1 = x0_old.subtract(q.multiply(x1_old));
+                    y1 = y0_old.subtract(q.multiply(y1_old));
+                    q = a.divide(b);
+                    r = a.mod(b);
+                    }
+
+                    //System.out.println(a +" "+ b +" "+ x0 +" "+ y0 +" "+ x1 +" "+ y1 +" "+ q +" "+ r);
+                }
+
+
+            }
+
+            //BigInteger ggt = (x0.multiply(a_old)).add(y0.multiply(b_old));
+            //System.out.println(x0 + " * " + a_old + " + " + y0 + " * " + b_old + " = " + ggt );
+            //System.out.println("isOne: " + isOne);
+        }
+
+        return isOne;
+    }
+
+}
