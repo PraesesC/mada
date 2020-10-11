@@ -34,7 +34,7 @@ public class Main {
             int a = 567;
             int b = 321;
             boolean isOne = euclidean(e_big,phi);
-            if (isOne == true){
+            if (isOne){
                 eIsCorrect = true;
                 System.out.println(isOne);
             }
@@ -53,7 +53,7 @@ public class Main {
 
 //-------------------------------------------------------------------------------
         //create private and public key files
-        try {
+        /*try {
             File file_sk = new File(private_key_file); //private-key
             File file_pk = new File(public_key_file); //public-key
 
@@ -97,7 +97,7 @@ public class Main {
         } catch (IOException e) {
             System.out.println("the file:  " + public_key_file + " failed to be writeable.");
             e.printStackTrace();
-        }
+        }*/
 
 
 
@@ -130,16 +130,17 @@ public class Main {
 
 
         int lessThan = a.compareTo(b);
-        if(lessThan == -1){
+        if(lessThan < 0){
             System.out.println("a is smaller than b!");
+            System.out.println("a: " + a);
+            System.out.println("b: " + b);
         }else{
 
             // un
-            while(bIsZero == false) {
+            while(!bIsZero) {
 
 
-
-                if (firstRow == true) {
+                if (firstRow) {
                     x0 = BigInteger.ONE;
                     y0 = BigInteger.ZERO;
                     x1 = BigInteger.ZERO;
@@ -164,7 +165,7 @@ public class Main {
                     if (b.equals(BigInteger.ZERO)){
                         bIsZero = true;
 
-                        if(x0.multiply(a_old).add(y0.multiply(b_old)).equals(1)){
+                        if(x0.multiply(a_old).add(y0.multiply(b_old)).equals(BigInteger.ONE)){
                             isOne = true;
                         }
                     }else{
