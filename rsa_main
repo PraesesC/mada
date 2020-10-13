@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) {
         boolean eIsCorrect = false;
         BigInteger e_big = null;
+        BigInteger d = BigInteger.ZERO;
 
         // 1. create RSA-Key-pair
         Random rnd = new Random();
@@ -33,19 +34,20 @@ public class Main {
             //erweiterter euklidischer algorithmus
             int a = 567;
             int b = 321;
-            boolean isOne = euclidean(e_big,phi);
+            //return d!, dann wenn d != 0
+            boolean isOne = euclidean(phi, e_big);
             if (isOne){
                 eIsCorrect = true;
                 System.out.println(isOne);
             }
         }
 
-      
         System.out.println("neues e: " + e_big.toString());
+        System.out.println("neues q: " + q.toString());
+        System.out.println("neues p: " + p.toString());
 
-
-        // calculate d
-
+        //write to file
+       // writeFile(n, d, e_big );
 
 
 
@@ -115,10 +117,11 @@ public class Main {
     static boolean euclidean(BigInteger a, BigInteger b) {
         BigInteger a_old = a;
         BigInteger b_old = b;
+        BigInteger result_y0 = BigInteger.ZERO;
         boolean firstRow = true;
         boolean isOne = false;
         boolean bIsZero = false;
-        //BigInteger x0 = 0, x1 = 0, y0 = 0, y1 = 0, q = 0, r = 0;
+
         BigInteger x0 = BigInteger.ZERO;
         BigInteger y0 = BigInteger.ZERO;
         BigInteger x1 = BigInteger.ZERO;
@@ -148,10 +151,6 @@ public class Main {
                     q = a.divide(b);
                     r = a.mod(b);
                     firstRow = false;
-
-                    //System.out.println(a +" "+ b +" "+ x0 +" "+ y0 +" "+ x1 +" "+ y1 +" "+ q +" "+ r);
-
-
                 } else {
                     x0_old = x0;
                     y0_old = y0;
@@ -165,25 +164,20 @@ public class Main {
                     if (b.equals(BigInteger.ZERO)){
                         bIsZero = true;
 
+                        //ggt(phi,e) = 1
                         if(x0.multiply(a_old).add(y0.multiply(b_old)).equals(BigInteger.ONE)){
                             isOne = true;
+                            result_y0 = y0;
                         }
                     }else{
-                    x1 = x0_old.subtract(q.multiply(x1_old));
-                    y1 = y0_old.subtract(q.multiply(y1_old));
-                    q = a.divide(b);
-                    r = a.mod(b);
+                        x1 = x0_old.subtract(q.multiply(x1_old));
+                        y1 = y0_old.subtract(q.multiply(y1_old));
+                        q = a.divide(b);
+                        r = a.mod(b);
                     }
-
-                    //System.out.println(a +" "+ b +" "+ x0 +" "+ y0 +" "+ x1 +" "+ y1 +" "+ q +" "+ r);
                 }
-
-
             }
 
-            //BigInteger ggt = (x0.multiply(a_old)).add(y0.multiply(b_old));
-            //System.out.println(x0 + " * " + a_old + " + " + y0 + " * " + b_old + " = " + ggt );
-            //System.out.println("isOne: " + isOne);
         }
 
         return isOne;
