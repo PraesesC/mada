@@ -1,6 +1,7 @@
 package com.company;
 
 import java.math.BigInteger;
+import java.sql.SQLOutput;
 import java.util.Random;
 import java.io.File;  // Import the File class
 import java.io.FileWriter;   // Import the FileWriter class
@@ -61,24 +62,74 @@ public class Main {
             int ascii = (int) character;
 
 
-            //convert decimal to binary
-            int binaryNumber = decimalToBinary(ascii);
+
+
         }
+
+        //testing - delete
+        BigInteger test_e = new BigInteger("13");
+        int test_ascii = 7;
+        BigInteger test_n = new BigInteger("11");
+
+        //convert decimal to binary
+        String binaryNumber = decimalToBinary(test_e);
+        encryptChar(test_ascii, binaryNumber, test_n);
 // ------------------------------------------------------------------------------------------
         // 3. decrypt the chiffre.txt with privat-key, write decrypted-text in text-d.txt
 
     }
 
-    static int decimalToBinary(int power){
+    static void encryptChar(int ascii, String binaryNumber,BigInteger n){
+
+        String last_bit ="";
+        BigInteger i;
+        BigInteger h = null;
+        BigInteger k = null;
+
+
+
+        for (int j = binaryNumber.length()-1; j >= 0; j-- ){
+
+
+            if (j == binaryNumber.length()-1){
+                i = BigInteger.valueOf(j);
+                h = BigInteger.ONE;
+                k = BigInteger.valueOf(ascii);
+
+                System.out.println(i + " | " + h + " | " + k);
+                last_bit = binaryNumber.substring(j);
+                //last_bit = binaryNumber.charAt(0);
+                System.out.println("last_bit: " + last_bit);
+
+            }else{
+                i = BigInteger.valueOf(j);
+                if (last_bit.equals("1")){
+                    h = h.multiply(k).mod(n);
+                }
+                k = k.pow(2).mod(n);
+                System.out.println(i + " | " + h + " | " + k);
+                last_bit = "";
+                last_bit = binaryNumber.substring(j, j+1);
+                System.out.println("last_bit: " + last_bit);
+                //last_bit = binaryNumber.charAt(0);
+
+            }
+       }
+
+        System.out.println("very Last_bit: " + last_bit);
+    }
+
+    static String decimalToBinary(BigInteger power){
         String stringBinary = "";
+        BigInteger two = new BigInteger("2");
 
 
-        while(power != 0){
-            stringBinary = (power % 2) + stringBinary;
-            power = power/2;
+        while(!power.equals(BigInteger.ZERO)){
+            stringBinary = (power.mod(two)) + stringBinary;
+            power = power.divide(two);
         }
-        int binary =Integer.parseInt( stringBinary);
-        return binary;
+        //int binary =Integer.parseInt( stringBinary);
+        return stringBinary;
     }
 
     static String readTextFile(){
